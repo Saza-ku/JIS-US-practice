@@ -10,26 +10,37 @@ import (
 func main() {
 	ch := make(chan int)
 	go func() {
-		r := bufio.NewReaderSize(os.Stdin, 1000000)
-		x := 0
+		r := bufio.NewReader(os.Stdin)
+		point := 0
 		for {
-			s, _, err := r.ReadLine()
+			question := "kyoto"
+			fmt.Printf("TASK: %s", question)
+			fmt.Println()
+			ans, _, err := r.ReadLine()
 			if err != nil {
 				panic(err)
 			}
-			fmt.Println(string(s))
-			x++
-			ch <- x
+			if question == string(ans) {
+				point++
+			} else {
+				fmt.Println("incorrect!")
+			}
+			ch <- point
+			fmt.Println()
 		}
 	}()
-	x := 0
+
+	point := 0
+	fmt.Println(time.Now())
 	for {
 		select {
-		case <-time.After(5 * time.Second):
-			fmt.Println("DONE")
-			fmt.Println(x)
+		case t := <-time.After(5 * time.Second):
+			fmt.Println()
+			fmt.Println("====== TIME OUT ======")
+			fmt.Printf("Your point is %d!\n", point)
+			fmt.Println(t)
 			return
-		case x = <-ch:
+		case point = <-ch:
 		}
 	}
 }
