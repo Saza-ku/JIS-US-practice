@@ -16,14 +16,14 @@ const (
 	fail
 )
 
-func Run() {
+func Run(t int) {
 	ch := start()
 	fmt.Println("====== START ======")
 
 	correct := 0
 	incorrect := 0
 	bc := context.Background()
-	ctx, cancel := context.WithTimeout(bc, 30*time.Second)
+	ctx, cancel := context.WithTimeout(bc, time.Duration(t)*time.Second)
 	defer cancel()
 
 	for {
