@@ -28,11 +28,7 @@ func Run() {
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println()
-			fmt.Println("====== TIME OUT ======")
-			fmt.Println("RESULT:")
-			fmt.Printf("  CORRECT  : %d\n", correct)
-			fmt.Printf("  INCORRECT: %d\n", incorrect)
+			showResult(correct, incorrect)
 			return
 		case r := <-ch:
 			if r == success {
@@ -46,16 +42,18 @@ func Run() {
 
 func start() <-chan result {
 	ch := make(chan result)
+
 	go func() {
 		reader := bufio.NewReader(os.Stdin)
 		for {
 			question := newTask()
-			fmt.Printf("TASK: %s", question)
-			fmt.Println()
+			fmt.Printf("TASK: %s\n", question)
+
 			ans, _, err := reader.ReadLine()
 			if err != nil {
 				panic(err)
 			}
+
 			if question == string(ans) {
 				ch <- success
 				fmt.Println("CORRECT!")
@@ -63,9 +61,11 @@ func start() <-chan result {
 				ch <- fail
 				fmt.Println("INCORRECT!")
 			}
+
 			fmt.Println()
 		}
 	}()
+
 	return ch
 }
 
@@ -80,4 +80,12 @@ func newTask() string {
 	}
 
 	return task
+}
+
+func showResult(correct, incorrect int) {
+	fmt.Println()
+	fmt.Println("====== TIME OUT ======")
+	fmt.Println("RESULT:")
+	fmt.Printf("  CORRECT  : %d\n", correct)
+	fmt.Printf("  INCORRECT: %d\n", incorrect)
 }
