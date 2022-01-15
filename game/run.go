@@ -18,6 +18,7 @@ const (
 
 func Run() {
 	ch := start()
+	fmt.Println("====== START ======")
 
 	correct := 0
 	incorrect := 0
