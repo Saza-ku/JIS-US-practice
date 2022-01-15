@@ -43,34 +43,36 @@ func Run() {
 func start() <-chan result {
 	ch := make(chan result)
 
-	go func() {
-		reader := bufio.NewReader(os.Stdin)
-		for {
-			question := newTask()
-			fmt.Printf("TASK: %s\n", question)
-
-			ans, _, err := reader.ReadLine()
-			if err != nil {
-				panic(err)
-			}
-
-			if question == string(ans) {
-				ch <- success
-				fmt.Println("CORRECT!")
-			} else {
-				ch <- fail
-				fmt.Println("INCORRECT!")
-			}
-
-			fmt.Println()
-		}
-	}()
+	go questionLoop(ch)
 
 	return ch
 }
 
+func questionLoop(ch chan<- result) {
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		question := newTask()
+		fmt.Printf("TASK: %s\n", question)
+
+		ans, _, err := reader.ReadLine()
+		if err != nil {
+			panic(err)
+		}
+
+		if question == string(ans) {
+			ch <- success
+			fmt.Println("CORRECT!")
+		} else {
+			ch <- fail
+			fmt.Println("INCORRECT!")
+		}
+
+		fmt.Println()
+	}
+}
+
 func newTask() string {
-	symbols := []string{"^", "&", "*", "(", ")", "-", "_", "=", "+", "¥", "|", "\\", "[", "{", "]", "}", ";", ":", "\"", "'", "`", "~"}
+	symbols := []string{"^", "&", "*", "(", ")", "-", "_", "=", "+", "|", "\\", "[", "{", "]", "}", ";", ":", "\"", "'", "`", "~"}
 	task := ""
 
 	for i := 0; i < 5; i++ {
