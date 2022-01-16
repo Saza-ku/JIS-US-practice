@@ -2,7 +2,6 @@ package game
 
 import (
 	"bufio"
-	"context"
 	"fmt"
 	"math/rand"
 	"os"
@@ -22,13 +21,11 @@ func Run(t int) {
 
 	correct := 0
 	incorrect := 0
-	bc := context.Background()
-	ctx, cancel := context.WithTimeout(bc, time.Duration(t)*time.Second)
-	defer cancel()
+	timeout := time.After(time.Duration(t) * time.Second)
 
 	for {
 		select {
-		case <-ctx.Done():
+		case <-timeout:
 			showResult(correct, incorrect)
 			return
 		case r := <-ch:
